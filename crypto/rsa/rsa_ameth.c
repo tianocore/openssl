@@ -916,29 +916,29 @@ const EVP_PKEY_ASN1_METHOD ossl_rsa_asn1_meths[2] = {
      "OpenSSL RSA method",
 
      rsa_pub_decode,
-     rsa_pub_encode,
+     0,//rsa_pub_encode,
      rsa_pub_cmp,
-     rsa_pub_print,
+     0,//rsa_pub_print,
 
-     rsa_priv_decode,
-     rsa_priv_encode,
-     rsa_priv_print,
+     0,//rsa_priv_decode,
+     0,//rsa_priv_encode,
+     0,//rsa_priv_print,
 
      int_rsa_size,
-     rsa_bits,
-     rsa_security_bits,
+     0,//rsa_bits,
+     0,//rsa_security_bits,
 
      0, 0, 0, 0, 0, 0,
 
-     rsa_sig_print,
+     0,//rsa_sig_print,
      int_rsa_free,
      rsa_pkey_ctrl,
      old_rsa_priv_decode,
-     old_rsa_priv_encode,
-     rsa_item_verify,
-     rsa_item_sign,
-     rsa_sig_info_set,
-     rsa_pkey_check,
+     0,//old_rsa_priv_encode,
+     0,//rsa_item_verify,
+     0,//rsa_item_sign,
+     0,//rsa_sig_info_set,
+     0,//rsa_pkey_check,
 
      0, 0,
      0, 0, 0, 0,
@@ -964,34 +964,34 @@ const EVP_PKEY_ASN1_METHOD ossl_rsa_pss_asn1_meth = {
      "OpenSSL RSA-PSS method",
 
      rsa_pub_decode,
-     rsa_pub_encode,
+     0,//rsa_pub_encode,
      rsa_pub_cmp,
-     rsa_pub_print,
+     0,//rsa_pub_print,
 
-     rsa_priv_decode,
-     rsa_priv_encode,
-     rsa_priv_print,
+     0,//rsa_priv_decode,
+     0,//rsa_priv_encode,
+     0,//rsa_priv_print,
 
      int_rsa_size,
-     rsa_bits,
-     rsa_security_bits,
+     0,//rsa_bits,
+     0,//rsa_security_bits,
 
      0, 0, 0, 0, 0, 0,
 
-     rsa_sig_print,
+     0,//rsa_sig_print,
      int_rsa_free,
      rsa_pkey_ctrl,
      0, 0,
-     rsa_item_verify,
-     rsa_item_sign,
-     rsa_sig_info_set,
-     rsa_pkey_check,
+     0,//rsa_item_verify,
+     0,//rsa_item_sign,
+     0,//rsa_sig_info_set,
+     0,//rsa_pkey_check,
 
      0, 0,
      0, 0, 0, 0,
 
      rsa_pkey_dirty_cnt,
-     rsa_pss_pkey_export_to,
-     rsa_pss_pkey_import_from,
-     rsa_pkey_copy
+     0,//rsa_pss_pkey_export_to,
+     0,//rsa_pss_pkey_import_from,
+     0,//rsa_pkey_copy
 };
