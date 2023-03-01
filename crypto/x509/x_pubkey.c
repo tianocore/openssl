@@ -256,7 +256,7 @@ static const ASN1_EXTERN_FUNCS x509_pubkey_ff = {
     0,                          /* Default clear behaviour is OK */
     NULL,
     x509_pubkey_ex_i2d,
-    x509_pubkey_ex_print,
+    NULL,
     x509_pubkey_ex_new_ex,
     x509_pubkey_ex_d2i_ex,
 };
