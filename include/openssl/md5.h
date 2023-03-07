@@ -18,6 +18,8 @@
 
 # include <openssl/opensslconf.h>
 
+#  define MD5_DIGEST_LENGTH 16
+
 # ifndef OPENSSL_NO_MD5
 #  include <openssl/e_os2.h>
 #  include <stddef.h>
@@ -25,7 +27,6 @@
 extern "C" {
 #  endif
 
-#  define MD5_DIGEST_LENGTH 16
 
 #  if !defined(OPENSSL_NO_DEPRECATED_3_0)
 /*
