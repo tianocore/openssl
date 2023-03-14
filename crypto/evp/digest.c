@@ -1072,7 +1072,12 @@ EVP_MD *EVP_MD_fetch(OSSL_LIB_CTX *ctx, const char *algorithm,
     EVP_MD *md =
         evp_generic_fetch(ctx, OSSL_OP_DIGEST, algorithm, properties,
                           evp_md_from_algorithm, evp_md_up_ref, evp_md_free);
-
+    /*  If turn on OPENSSL_NO_AUTOALGINIT, The value of 'type' will be lost when
+        using EVP_MD_fetch() to retrieve EVP_MD after EVP_add_digest().
+        Manually add it back here. */
+#   ifdef OPENSSL_NO_AUTOALGINIT
+        md->type = OBJ_txt2nid(algorithm);
+#   endif
     return md;
 }
 
