@@ -44,6 +44,7 @@ typedef struct enc_struct {
 static const BIO_METHOD methods_enc = {
     BIO_TYPE_CIPHER,
     "cipher",
+#ifndef OPENSSL_SYS_UEFI
     bwrite_conv,
     enc_write,
     bread_conv,
@@ -54,6 +55,7 @@ static const BIO_METHOD methods_enc = {
     enc_new,
     enc_free,
     enc_callback_ctrl,
+#endif
 };
 
 const BIO_METHOD *BIO_f_cipher(void)
