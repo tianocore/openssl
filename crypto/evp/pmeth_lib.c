@@ -255,7 +255,11 @@ static EVP_PKEY_CTX *int_ctx_new(OSSL_LIB_CTX *libctx,
         pmeth = EVP_PKEY_meth_find(id);
     else
 # endif
+# ifdef OPENSSL_SYS_UEFI
+        app_pmeth = pmeth = EVP_PKEY_meth_find(id);
+# else
         app_pmeth = pmeth = evp_pkey_meth_find_added_by_application(id);
+# endif
 
     /* END legacy */
 #endif /* FIPS_MODULE */
