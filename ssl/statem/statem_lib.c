@@ -762,18 +762,20 @@ MSG_PROCESS_RETURN tls_process_change_cipher_spec(SSL *s, PACKET *pkt)
     }
 
     if (SSL_IS_DTLS(s)) {
+#ifndef OPENSSL_NO_DTLS
         dtls1_reset_seq_numbers(s, SSL3_CC_READ);
 
         if (s->version == DTLS1_BAD_VER)
             s->d1->handshake_read_seq++;
 
-#ifndef OPENSSL_NO_SCTP
+# ifndef OPENSSL_NO_SCTP
         /*
          * Remember that a CCS has been received, so that an old key of
          * SCTP-Auth can be deleted when a CCS is sent. Will be ignored if no
          * SCTP is used
          */
         BIO_ctrl(SSL_get_wbio(s), BIO_CTRL_DGRAM_SCTP_AUTH_CCS_RCVD, 1, NULL);
+# endif
 #endif
     }
 
@@ -1125,6 +1127,7 @@ WORK_STATE tls_finish_handshake(SSL *s, ossl_unused WORK_STATE wst,
                              &s->session_ctx->stats.sess_connect_good);
         }
 
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s)) {
             /* done with handshaking */
             s->d1->handshake_read_seq = 0;
@@ -1132,6 +1135,7 @@ WORK_STATE tls_finish_handshake(SSL *s, ossl_unused WORK_STATE wst,
             s->d1->next_handshake_write_seq = 0;
             dtls1_clear_received_buffer(s);
         }
+#endif
     }
 
     if (s->info_callback != NULL)

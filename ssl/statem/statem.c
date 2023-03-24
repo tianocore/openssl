@@ -579,10 +579,14 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
         case READ_STATE_HEADER:
             /* Get the state the peer wants to move to */
             if (SSL_IS_DTLS(s)) {
+#ifndef OPENSSL_NO_DTLS
                 /*
                  * In DTLS we get the whole message in one go - header and body
                  */
                 ret = dtls_get_message(s, &mt);
+#else
+                return SUB_STATE_ERROR;
+#endif
             } else {
                 ret = tls_get_message_header(s, &mt);
             }
@@ -626,11 +630,15 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
 
         case READ_STATE_BODY:
             if (SSL_IS_DTLS(s)) {
+#ifndef OPENSSL_NO_DTLS
                 /*
                  * Actually we already have the body, but we give DTLS the
                  * opportunity to do any further processing.
                  */
                 ret = dtls_get_message_body(s, &len);
+#else
+                return SUB_STATE_ERROR;
+#endif
             } else {
                 ret = tls_get_message_body(s, &len);
             }
@@ -656,7 +664,9 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
 
             case MSG_PROCESS_FINISHED_READING:
                 if (SSL_IS_DTLS(s)) {
+#ifndef OPENSSL_NO_DTLS
                     dtls1_stop_timer(s);
+#endif
                 }
                 return SUB_STATE_FINISHED;
 
@@ -688,7 +698,9 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
 
             case WORK_FINISHED_STOP:
                 if (SSL_IS_DTLS(s)) {
+#ifndef OPENSSL_NO_DTLS
                     dtls1_stop_timer(s);
+#endif
                 }
                 return SUB_STATE_FINISHED;
             }
@@ -711,9 +723,11 @@ static int statem_do_write(SSL *s)
 
     if (st->hand_state == TLS_ST_CW_CHANGE
         || st->hand_state == TLS_ST_SW_CHANGE) {
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s))
             return dtls1_do_write(s, SSL3_RT_CHANGE_CIPHER_SPEC);
         else
+#endif
             return ssl3_do_write(s, SSL3_RT_CHANGE_CIPHER_SPEC);
     } else {
         return ssl_do_write(s);
@@ -879,7 +893,9 @@ static SUB_STATE_RETURN write_state_machine(SSL *s)
 
         case WRITE_STATE_SEND:
             if (SSL_IS_DTLS(s) && st->use_timer) {
+#ifndef OPENSSL_NO_DTLS
                 dtls1_start_timer(s);
+#endif
             }
             ret = statem_do_write(s);
             if (ret <= 0) {

@@ -1557,6 +1557,7 @@ int SSL_has_pending(const SSL *s)
      * the records for some reason.
      */
 
+#ifndef OPENSSL_NO_DTLS
     /* Check buffered app data if any first */
     if (SSL_IS_DTLS(s)) {
         DTLS1_RECORD_DATA *rdata;
@@ -1569,6 +1570,7 @@ int SSL_has_pending(const SSL *s)
                 return 1;
         }
     }
+#endif
 
     if (RECORD_LAYER_processed_read_pending(&s->rlayer))
         return 1;

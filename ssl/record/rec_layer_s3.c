@@ -62,8 +62,10 @@ void RECORD_LAYER_clear(RECORD_LAYER *rl)
     RECORD_LAYER_reset_read_sequence(rl);
     RECORD_LAYER_reset_write_sequence(rl);
 
+#ifndef OPENSSL_NO_DTLS
     if (rl->d)
         DTLS_RECORD_LAYER_clear(rl);
+#endif
 }
 
 void RECORD_LAYER_release(RECORD_LAYER *rl)
