@@ -813,6 +813,7 @@ WORK_STATE ossl_statem_client_post_work(SSL *s, WORK_STATE wst)
             return WORK_ERROR;
         }
 
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s)) {
 #ifndef OPENSSL_NO_SCTP
             if (s->hit) {
@@ -827,6 +828,7 @@ WORK_STATE ossl_statem_client_post_work(SSL *s, WORK_STATE wst)
 
             dtls1_reset_seq_numbers(s, SSL3_CC_WRITE);
         }
+#endif
         break;
 
     case TLS_ST_CW_FINISHED:
@@ -891,9 +893,11 @@ int ossl_statem_client_construct_message(SSL *s, WPACKET *pkt,
         return 0;
 
     case TLS_ST_CW_CHANGE:
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s))
             *confunc = dtls_construct_change_cipher_spec;
         else
+#endif
             *confunc = tls_construct_change_cipher_spec;
         *mt = SSL3_MT_CHANGE_CIPHER_SPEC;
         break;
@@ -1026,8 +1030,10 @@ MSG_PROCESS_RETURN ossl_statem_client_process_message(SSL *s, PACKET *pkt)
     case TLS_ST_CR_SRVR_HELLO:
         return tls_process_server_hello(s, pkt);
 
+#ifndef OPENSSL_NO_DTLS
     case DTLS_ST_CR_HELLO_VERIFY_REQUEST:
         return dtls_process_hello_verify(s, pkt);
+#endif
 
     case TLS_ST_CR_CERT:
         return tls_process_server_certificate(s, pkt);

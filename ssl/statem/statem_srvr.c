@@ -690,17 +690,21 @@ WORK_STATE ossl_statem_server_pre_work(SSL *s, WORK_STATE wst)
 
     case TLS_ST_SW_HELLO_REQ:
         s->shutdown = 0;
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s))
             dtls1_clear_sent_buffer(s);
+#endif
         break;
 
     case DTLS_ST_SW_HELLO_VERIFY_REQUEST:
         s->shutdown = 0;
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s)) {
             dtls1_clear_sent_buffer(s);
             /* We don't buffer this message so don't use the timer */
             st->use_timer = 0;
         }
+#endif
         break;
 
     case TLS_ST_SW_SRVR_HELLO:
@@ -715,10 +719,12 @@ WORK_STATE ossl_statem_server_pre_work(SSL *s, WORK_STATE wst)
 
     case TLS_ST_SW_SRVR_DONE:
 #ifndef OPENSSL_NO_SCTP
+# ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s) && BIO_dgram_is_sctp(SSL_get_wbio(s))) {
             /* Calls SSLfatal() as required */
             return dtls_wait_for_dry(s);
         }
+# endif
 #endif
         return WORK_FINISHED_CONTINUE;
 
@@ -931,8 +937,10 @@ WORK_STATE ossl_statem_server_post_work(SSL *s, WORK_STATE wst)
             return WORK_ERROR;
         }
 
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s))
             dtls1_reset_seq_numbers(s, SSL3_CC_WRITE);
+#endif
         break;
 
     case TLS_ST_SW_SRVR_DONE:
@@ -1026,17 +1034,21 @@ int ossl_statem_server_construct_message(SSL *s, WPACKET *pkt,
         return 0;
 
     case TLS_ST_SW_CHANGE:
+#ifndef OPENSSL_NO_DTLS
         if (SSL_IS_DTLS(s))
             *confunc = dtls_construct_change_cipher_spec;
         else
+#endif
             *confunc = tls_construct_change_cipher_spec;
         *mt = SSL3_MT_CHANGE_CIPHER_SPEC;
         break;
 
+#ifndef OPENSSL_NO_DTLS
     case DTLS_ST_SW_HELLO_VERIFY_REQUEST:
         *confunc = dtls_construct_hello_verify_request;
         *mt = DTLS1_MT_HELLO_VERIFY_REQUEST;
         break;
+#endif
 
     case TLS_ST_SW_HELLO_REQ:
         /* No construction function needed */
