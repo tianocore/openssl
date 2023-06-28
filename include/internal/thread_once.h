@@ -34,6 +34,7 @@
  *     return 0;
  * }
  */
+# ifndef OPENSSL_SYS_UEFI
 #  define DEFINE_RUN_ONCE(init)                   \
     static int init(void);                     \
     int init##_ossl_ret_ = 0;                   \
@@ -42,14 +43,23 @@
         init##_ossl_ret_ = init();              \
     }                                           \
     static int init(void)
+# else
+#  define DEFINE_RUN_ONCE(init)                   \
+    int init(void)
+# endif
 
 /*
  * DECLARE_RUN_ONCE: Declare an initialiser function that should be run exactly
  * once that has been defined in another file via DEFINE_RUN_ONCE().
  */
+# ifndef OPENSSL_SYS_UEFI
 #  define DECLARE_RUN_ONCE(init)                  \
     extern int init##_ossl_ret_;                \
     void init##_ossl_(void);
+# else
+#  define DECLARE_RUN_ONCE(init)                   \
+    int init(void);
+# endif
 
 /*
  * DEFINE_RUN_ONCE_STATIC: Define an initialiser function that should be run
@@ -126,9 +136,13 @@
  *
  * (*) by convention, since the init function must return 1 on success.
  */
+# ifndef OPENSSL_SYS_UEFI
 #  define RUN_ONCE(once, init)                                            \
     (CRYPTO_THREAD_run_once(once, init##_ossl_) ? init##_ossl_ret_ : 0)
-
+# else
+#  define RUN_ONCE(once, init)                                            \
+    init()
+# endif
 /*
  * RUN_ONCE_ALT - use CRYPTO_THREAD_run_once, to run an alternative initialiser
  *                function and check if that initialisation succeeded
@@ -144,8 +158,13 @@
  *
  * (*) by convention, since the init function must return 1 on success.
  */
+# ifndef OPENSSL_SYS_UEFI
 #  define RUN_ONCE_ALT(once, initalt, init)                               \
     (CRYPTO_THREAD_run_once(once, initalt##_ossl_) ? init##_ossl_ret_ : 0)
+# else
+#  define RUN_ONCE_ALT(once, initalt, init)                               \
+    initalt()
+# endif
 
 # endif /* FIPS_MODULE */
 #endif /* OSSL_INTERNAL_THREAD_ONCE_H */
